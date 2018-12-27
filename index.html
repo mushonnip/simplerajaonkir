@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Get Ongkir</title>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="X-UA-Compatible" content="IE=7">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+</head>
+<style type="text/css">
+    .container-fluid {
+        padding-top: 20px;
+
+    }
+
+    .custom-select {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+</style>
+
+<body>
+    <nav class="navbar navbar-expand-md bg-light navbar-light">
+        <a href="" class="navbar-brand">Navbar Icon</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="collapsibleNavbar">
+            <ul class="navbar navbar-nav">
+                <li class="nav-item"><a href="" class="nav-link">Hallo</a></li>
+            </ul>
+            <ul class="navbar navbar-nav">
+                <li class="nav-item"><a href="" class="nav-link">Test</a></li>
+            </ul>
+            <ul class="navbar navbar-nav">
+                <li class="nav-item"><a href="" class="nav-link">Ayam</a></li>
+            </ul>
+            <ul class="navbar navbar-nav">
+                <li class="nav-item"><a href="" class="nav-link">Haha</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <ol class="breadcrumb">
+            <li class="active">Home</li>
+        </ol>
+        <div class="row">
+            <div class="col-md-4">
+                <ul class="list-group">
+                    <li class="list-group-item">list</li>
+                    <li class="list-group-item">list</li>
+                    <li class="list-group-item">list</li>
+                </ul>
+            </div>
+            <div class="col-md-8">
+                <button class="btn btn-sm btn-success" id="get_data">Get Data Ongkir</button>
+                <hr>
+                <div class="form-check form-check-inline">
+                    <label class="form-check-label">
+                        <div class="form-check-inline">
+                            <div>
+                                <select class="custom-select custom-select-sm" id="prop_tuj">
+                                    <option selected>Provinsi Tujuan</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-check-inline">
+                            <div>
+                                <select class="custom-select custom-select-sm" id="kot_tuj">
+                                    <option selected>Kota Tujuan</option>
+                                </select>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+                <div class="form-check-inline">
+                    <div>
+                        <select class="custom-select custom-select-sm" id="prop_asal">
+                            <option selected>Provinsi Asal</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-check-inline">
+                    <div>
+                        <select class="custom-select custom-select-sm" id="kot_asal">
+                            <option selected>Kota Asal</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-check-inline">
+                    <div>
+                        <select class="custom-select custom-select-sm" id="js_peng">
+                            <option selected>Jasa Pengiriman</option>
+                            <option value="jne">Jne</option>
+                            <option value="tiki">Tiki</option>
+                            <option value="pos">Pos</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-check-inline">
+                    <div>
+                        <select class="custom-select custom-select-sm" id="berat">
+                            <option selected>Berat</option>
+                            <option value="1000">1 Kg</option>
+                            <option value="2000">2 Kg</option>
+                            <option value="3000">3 Kg</option>
+                        </select>
+                    </div>
+                </div>
+                <hr>
+                <table class="table table-striped table-bordered">
+                    <thead class="bg-info">
+                        <tr>
+                            <th>Kota Asal</th>
+                            <th>Kota Tujuan</th>
+                            <th>Berat</th>
+                            <th>Nama Jasa Pengiriman</th>
+                            <th>Harga</th>
+                        </tr>
+                    </thead>
+                    <tbody id="hasil_ongkir">
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.ajax({
+                type: "GET",
+                url: "init.php",
+                success: function (data) {
+                    var opt = $("#prop_tuj option");
+                    opt.remove();
+                    var opt = $("#prop_asal option");
+                    opt.remove();
+                    $("#prop_asal").remove("option");
+                    $("#prop_asal").append(data);
+
+                    $("#prop_tuj").append(data);
+
+                }
+            });
+            $("#prop_asal").change(function () {
+                var prop_as_id = $("#prop_asal option:selected").val()
+                var dataid = 'prov_id=' + prop_as_id
+                $.ajax({
+                    type: "GET",
+                    url: "get_kab.php",
+                    data: dataid,
+                    success: function (data) {
+                        var opt = $("#kot_asal option");
+                        opt.remove();
+                        $("#kot_asal").append(data);
+                    }
+                });
+            });
+            $("#prop_tuj").change(function () {
+                var prop_tuj_id = $("#prop_tuj option:selected").val()
+                var dataid = 'prov_id=' + prop_tuj_id
+                $.ajax({
+                    type: "GET",
+                    url: "get_kab.php",
+                    data: dataid,
+                    success: function (data) {
+                        var opt = $("#kot_tuj option");
+                        opt.remove();
+                        $("#kot_tuj").append(data);
+                    }
+                });
+            });
+            $("#berat").change(function () {
+                var asal = $('#kot_asal option:selected').val();
+                var tujuan = $('#kot_tuj option:selected').val();
+                var kurir = $('#js_peng option:selected').val();
+                var berat = $('#berat option:selected').val();
+
+                if (berat != "" || kurir != "" || tujuan != "" || asal != "") {
+                    $.ajax({
+                        type: 'GET',
+                        url: 'get_ongkir.php',
+                        data: 'asal=' + asal + '&kurir=' + kurir + '&tujuan=' + tujuan + '&berat=' + berat,
+                        success: function (data) {
+                            // alert(data);
+                            //jika data berhasil didapatkan, tampilkan ke dalam element div ongkir
+                            var opt = $("#hasil_ongkir tr");
+                            opt.remove();
+                            $("#hasil_ongkir").append(data);
+                        }
+                    });
+                } else {
+                    alert("error Bos");
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
